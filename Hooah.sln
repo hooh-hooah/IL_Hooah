@@ -1,0 +1,23 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AI_Hooah", "AI_Hooah\AI_Hooah.csproj", "{9349AA3C-ABC0-4AD2-AE98-4DEBE6088CBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HS2_Hooah", "HS2_Hooah\HS2_Hooah.csproj", "{71C8BB01-0042-4927-B64B-E26E4C9A0550}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "IL_Hooah", "IL_Hooah\IL_Hooah.shproj", "{CA976A82-51E1-4371-9ECA-789B8E529DB5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9349AA3C-ABC0-4AD2-AE98-4DEBE6088CBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9349AA3C-ABC0-4AD2-AE98-4DEBE6088CBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9349AA3C-ABC0-4AD2-AE98-4DEBE6088CBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9349AA3C-ABC0-4AD2-AE98-4DEBE6088CBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71C8BB01-0042-4927-B64B-E26E4C9A0550}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71C8BB01-0042-4927-B64B-E26E4C9A0550}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71C8BB01-0042-4927-B64B-E26E4C9A0550}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71C8BB01-0042-4927-B64B-E26E4C9A0550}.Debug|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+EndGlobal
