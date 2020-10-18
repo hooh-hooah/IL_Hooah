@@ -32,3 +32,9 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+- task: GitHubComment@0
+  inputs:
+    gitHubConnection: 'hooh-hooah'
+    repositoryName: '$(Build.Repository.Name)'
+    id: '1'
+    comment: 'hey nice'
