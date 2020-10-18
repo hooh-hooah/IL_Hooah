@@ -39,3 +39,13 @@ steps:
     repositoryName: '$(Build.Repository.Name)'
     id: '1'
     comment: 'hey nice'
+
+- task: GitHubRelease@1
+  inputs:
+    gitHubConnection: 'hooh-hooah'
+    repositoryName: '$(Build.Repository.Name)'
+    action: 'create'
+    target: '$(Build.SourceVersion)'
+    tagSource: 'gitTag'
+    changeLogCompareToRelease: 'lastFullRelease'
+    changeLogType: 'commitBased'
