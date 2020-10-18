@@ -22,7 +22,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)LookAtIt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LookAtMe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NiceMirrorReflection.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PewSpark.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Serialization\HooahComponentInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Serialization\Target\BaseResolverClass.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Serialization\Target\Character.cs" />
