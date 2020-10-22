@@ -32,17 +32,9 @@ steps:
     configuration: '$(buildConfiguration)'
     msbuildArchitecture: 'x64'
     createLogFile: true
-
-- task: GitHubComment@0
-  inputs:
-    gitHubConnection: 'hooh-hooah'
-    repositoryName: '$(Build.Repository.Name)'
-    id: '1'
-    comment: 'hey nice'
-
 - task: GitHubRelease@1
   inputs:
-    gitHubConnection: 'hooh-hooah'
+    gitHubConnection: '$(GithubAccessToken)'
     repositoryName: '$(Build.Repository.Name)'
     action: 'create'
     target: '$(Build.SourceVersion)'
