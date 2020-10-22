@@ -79,9 +79,6 @@
             <HintPath>..\packages\IllusionLibs.HoneySelect2.UnityEngine.CoreModule.2018.4.11\lib\net46\UnityEngine.CoreModule.dll</HintPath>
             <Private>True</Private>
         </Reference>
-        <Reference Include="UnityEngine.ParticleSystemModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <HintPath>..\..\..\..\suqa\HoneySelect2_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
-        </Reference>
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Plugin.cs" />
@@ -96,14 +93,7 @@
     <PropertyGroup>
         <PostBuildEvent>
             copy /Y "$(TargetDir)$(AssemblyName).dll" "$(HS2Path)$(ProjectName).dll"
+            copy /Y "$(TargetDir)$(AssemblyName).dll" "$(TargetDir)$/final/$(ProjectName).dll"
         </PostBuildEvent>
     </PropertyGroup>
-    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-         Other similar extension points exist, see Microsoft.Common.targets.
-    <Target Name="BeforeBuild">
-    </Target>n
-    <Target Name="AfterBuild">
-    </Target>
-    -->
-
 </Project>

@@ -71,9 +71,6 @@
           <HintPath>..\packages\IllusionLibs.AIGirl.UnityEngine.CoreModule.2018.2.21.1\lib\net46\UnityEngine.CoreModule.dll</HintPath>
           <Private>True</Private>
         </Reference>
-        <Reference Include="UnityEngine.ParticleSystemModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <HintPath>..\..\..\..\AI-Syoujyo\StudioNEOV2_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
-        </Reference>
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Plugin.cs" />
@@ -91,6 +88,7 @@
     <PropertyGroup>
         <PostBuildEvent>
             copy /Y "$(TargetDir)$(AssemblyName).dll" "$(AIPath)$(ProjectName).dll"
+            copy /Y "$(TargetDir)$(AssemblyName).dll" "$(TargetDir)$/final/$(ProjectName).dll"
         </PostBuildEvent>
     </PropertyGroup>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
