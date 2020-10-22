@@ -92,7 +92,6 @@
     <Import Project="..\IL_Hooah\IL_Hooah.projitems" Label="Shared" />
     <PropertyGroup>
         <PostBuildEvent>
-            copy /Y "$(TargetDir)$(AssemblyName).dll" "$(HS2Path)$(ProjectName).dll"
             copy /Y "$(TargetDir)$(AssemblyName).dll" "$(TargetDir)$/final/$(ProjectName).dll"
         </PostBuildEvent>
     </PropertyGroup>

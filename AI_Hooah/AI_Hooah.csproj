@@ -87,7 +87,6 @@
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <PropertyGroup>
         <PostBuildEvent>
-            copy /Y "$(TargetDir)$(AssemblyName).dll" "$(AIPath)$(ProjectName).dll"
             copy /Y "$(TargetDir)$(AssemblyName).dll" "$(TargetDir)$/final/$(ProjectName).dll"
         </PostBuildEvent>
     </PropertyGroup>
