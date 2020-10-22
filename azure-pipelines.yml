@@ -4,7 +4,9 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-- cicd/azure
+  tags:
+    include:
+    - v*
 
 pool:
   vmImage: 'windows-latest'
@@ -39,11 +41,11 @@ steps:
     repositoryName: 'hooh-hooah/IL_Hooah'
     action: 'create'
     target: '$(Build.SourceVersion)'
-    title: 'IL_Hooah Release $(Build.SourceVersion)'
     tagSource: 'gitTag'
     tagPattern: 'v*'
-    changeLogCompareToRelease: 'lastFullRelease'
-    changeLogType: 'commitBased'
-    tagSource: 'gitTag'
+    title: 'IL_Hooah Release $(Build.SourceVersion)'
+    assets: |
+      AI_Hooah.dll
+      HS2_Hooah.dll
     changeLogCompareToRelease: 'lastFullRelease'
     changeLogType: 'commitBased'
