@@ -32,12 +32,18 @@ steps:
     configuration: '$(buildConfiguration)'
     msbuildArchitecture: 'x64'
     createLogFile: true
+
 - task: GitHubRelease@1
   inputs:
-    gitHubConnection: '$(GithubAccessToken)'
-    repositoryName: '$(Build.Repository.Name)'
+    gitHubConnection: 'Azure Automatic Build Setup'
+    repositoryName: 'hooh-hooah/IL_Hooah'
     action: 'create'
     target: '$(Build.SourceVersion)'
+    title: 'IL_Hooah Release $(Build.SourceVersion)'
+    tagSource: 'gitTag'
+    tagPattern: 'v*'
+    changeLogCompareToRelease: 'lastFullRelease'
+    changeLogType: 'commitBased'
     tagSource: 'gitTag'
     changeLogCompareToRelease: 'lastFullRelease'
     changeLogType: 'commitBased'
