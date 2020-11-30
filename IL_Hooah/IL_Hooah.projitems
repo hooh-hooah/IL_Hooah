@@ -19,9 +19,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Hooks\Hooks.AdvancedStudioItems.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Hooks\Hooks.FacialAnimations.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Hooks\Hooks.SkinnedBones.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LiquidHangController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LookAtIt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LookAtMe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RailedTracker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NomiEventConsumer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventConsumer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NiceMirrorReflection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PewSpark.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Serialization\HooahComponentInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Serialization\Target\BaseResolverClass.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Serialization\Target\Character.cs" />
@@ -29,10 +34,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Serialization\Target\StudioObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Serialization\Utility.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SkinnedAccessory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\VolumetricLight\VolumetricLightUI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SkinnedBones.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\Vector.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)UI" />
   </ItemGroup>
 </Project>

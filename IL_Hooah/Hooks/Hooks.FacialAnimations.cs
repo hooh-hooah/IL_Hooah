@@ -40,22 +40,20 @@ namespace HooahComponents.Hooks
 
         public static bool TryGetAnimator(ChaControl chaControl, out Animator animator)
         {
+            animator = null;
             if (chaControl == null || chaControl.objHead == null || chaControl.objHead.transform == null)
-            {
-                animator = null;
                 return false;
-            }
 
             var transform = chaControl.objHead.transform;
             // TODO: find N_ something if it failed to find something.
             var target = transform.GetChild(0);
             if (target == null)
-            {
-                animator = null;
                 return false;
-            }
 
+            if (Animators.ContainsKey(target.gameObject))
+                return false;
             animator = target.GetOrAddComponent<Animator>();
+            Animators.Add(target.gameObject, animator);
             return true;
         }
 
@@ -84,44 +82,33 @@ namespace HooahComponents.Hooks
             // on parent is cleared... 
             // check child's parent.
             // find character and clear animation controller on the face.
-            if (TryFindCharacter(instance, child, out var chaControl) && TryGetAnimator(chaControl, out var animator))
-            {
-                animator.runtimeAnimatorController = null;
-                animator.enabled = false;
-                if (AnimationHashset.Contains(animator))
-                    AnimationHashset.Remove(animator);
-            }
+            if (!TryFindCharacter(instance, child, out var chaControl) || !TryGetAnimator(chaControl, out var animator)) return;
+            animator.runtimeAnimatorController = null;
+            animator.enabled = false;
         }
 
         public static void OnAttach(Studio.Studio instance, TreeNodeObject parent, TreeNodeObject child)
         {
             // on being parented.
             // take care if parent is not part of god damn character.
-            if (TryFindCharacter(instance, parent, out var chaControl) && TryGetAnimator(chaControl, out var animator) && TryGetItem(instance, child, out var transform))
-            {
-                // transfer serialized controller
-                animator.enabled = false;
-                if (transform.name.Contains("container_")) // TODO: unfuck this mess
-                {
-                    var comAnim = transform.GetComponent<Animator>();
-                    if (comAnim != null) animator.runtimeAnimatorController = comAnim.runtimeAnimatorController;
-                    AnimationHashset.Add(animator);
-                }
-            }
+            if (!TryFindCharacter(instance, parent, out var chaControl) || !TryGetAnimator(chaControl, out var animator) || !TryGetItem(instance, child, out var transform)) return;
+            // transfer serialized controller
+            animator.enabled = false;
+            if (!transform.name.Contains("container_")) return;
+            var comAnim = transform.GetComponent<Animator>();
+            if (comAnim != null) animator.runtimeAnimatorController = comAnim.runtimeAnimatorController;
         }
 
-        private static readonly HashSet<Animator> AnimationHashset = new HashSet<Animator>();
+        private static readonly Dictionary<GameObject, Animator> Animators = new Dictionary<GameObject, Animator>();
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(FaceBlendShape), "OnLateUpdate")]
-        public static void LateUpdateLate()
+        public static void LateUpdateLate(FaceBlendShape __instance)
         {
-            var time = Time.fixedDeltaTime;
-            foreach (var animator in AnimationHashset)
-            {
-                if (animator != null) animator.Update(time);
-                else AnimationHashset.Remove(animator);
-            }
+            if (__instance.gameObject == null || __instance.gameObject.transform.GetChild(0) == null) return;
+            var headObject = __instance.gameObject.transform.GetChild(0).gameObject;
+            if (Animators.TryGetValue(headObject, out var animator) && animator.runtimeAnimatorController != null)
+                animator.Update(Time.deltaTime);
         }
     }
 }

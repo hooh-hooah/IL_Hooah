@@ -71,6 +71,9 @@
           <HintPath>..\packages\IllusionLibs.AIGirl.UnityEngine.CoreModule.2018.2.21.1\lib\net46\UnityEngine.CoreModule.dll</HintPath>
           <Private>True</Private>
         </Reference>
+        <Reference Include="UnityEngine.ParticleSystemModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\..\AI-Syoujyo\StudioNEOV2_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+        </Reference>
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Plugin.cs" />
@@ -89,6 +92,12 @@
         <PostBuildEvent>
             mkdir "$(TargetDir)final"
             copy /Y "$(TargetDir)$(AssemblyName).dll" "$(TargetDir)final\$(ProjectName).dll"
+
+            if not [$(AIPath)] == "" (
+            if exist "$(AIPath)" (
+            copy /Y "$(TargetDir)$(AssemblyName).dll" "$(AIPath)$(ProjectName).dll"
+            )
+            )
         </PostBuildEvent>
     </PropertyGroup>
 </Project>

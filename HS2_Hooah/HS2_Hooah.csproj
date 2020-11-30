@@ -79,6 +79,9 @@
             <HintPath>..\packages\IllusionLibs.HoneySelect2.UnityEngine.CoreModule.2018.4.11\lib\net46\UnityEngine.CoreModule.dll</HintPath>
             <Private>True</Private>
         </Reference>
+        <Reference Include="UnityEngine.ParticleSystemModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\..\suqa\StudioNEOV2_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+        </Reference>
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Plugin.cs" />
@@ -94,6 +97,12 @@
         <PostBuildEvent>
             mkdir "$(TargetDir)final"
             copy /Y "$(TargetDir)$(AssemblyName).dll" "$(TargetDir)final\$(ProjectName).dll"
+
+            if not [$(HS2Path)] == "" (
+            if exist "$(HS2Path)" (
+            copy /Y "$(TargetDir)$(AssemblyName).dll" "$(HS2Path)$(ProjectName).dll"
+            )
+            )
         </PostBuildEvent>
     </PropertyGroup>
 </Project>

@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +25,7 @@ public class DickController : MonoBehaviour
 
     public AudioClip[] pewSounds;
     public AudioSource audioPlayer;
-    private Random _random = new Random();
+    private readonly Random _random = new Random();
     private Animator _animator;
 
     public void PlayPew()
@@ -33,8 +33,9 @@ public class DickController : MonoBehaviour
         if (!pewSounds.Any() || audioPlayer == null) return;
         audioPlayer.Stop();
         var randomIndex = _random.Next(0, pewSounds.Length - 1);
-        audioPlayer.pitch =  (_animator != null ? _animator.speed : 1f) + Convert.ToSingle(_random.NextDouble()*0.4);
+        audioPlayer.pitch =  Mathf.Min(2f, _animator != null ? _animator.speed : 1f) + Convert.ToSingle(_random.NextDouble()*0.2);
         audioPlayer.PlayOneShot(pewSounds[randomIndex]);
+        // EventConsumer.EmitEvent(EventConsumer.EventType.Nomi);
     }
     
     public GameObject curveEnd;
