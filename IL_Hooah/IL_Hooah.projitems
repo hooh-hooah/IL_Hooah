@@ -34,6 +34,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Serialization\Target\StudioObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Serialization\Utility.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SkinnedAccessory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SoundContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\VolumetricLight\VolumetricLightUI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SkinnedBones.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\Vector.cs" />
