@@ -11,5 +11,6 @@ public class HooahPlugin : BaseUnityPlugin
     private void Start()
     {
         HarmonyWrapper.PatchAll(typeof(Hooks));
+        SkinnedAccessoryHook.RegisterHook();
     }
 }

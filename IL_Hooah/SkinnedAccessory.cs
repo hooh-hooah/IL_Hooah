@@ -1,10 +1,56 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using AIChara;
+using BepInEx.Harmony;
+using HarmonyLib;
 using HooahComponents.Utility;
 using JetBrains.Annotations;
 using UnityEngine;
+
+public static class SkinnedAccessoryHook
+{
+    public static void RegisterHook()
+    {
+        var harmony = new Harmony("IL_HooahSkinnedAccessory");
+        harmony.Patch(AccessTools.Method(typeof(ChaControl).GetNestedType("<ChangeAccessoryAsync>c__Iterator12", AccessTools.all), "MoveNext"),
+            null,
+            new HarmonyMethod(typeof(SkinnedAccessoryHook), nameof(RegisterQueue)),
+            null);
+    }
+
+    public static void RegisterQueue(object __instance)
+    {
+        var traverse = Traverse.Create(__instance);
+        var chaControl = traverse.Field("$this")?.GetValue<ChaControl>();
+        if (chaControl == null) return;
+
+        var slotField = Traverse.Create(__instance)?.Field("$locvar0");
+        if (slotField == null) return;
+
+        var slotValue = slotField.Field<int>("slotNo").Value;
+        if (slotValue < 0) return;
+
+        try
+        {
+            var accessory = chaControl.cmpAccessory[slotValue];
+            if (accessory == null) return;
+
+            var gameObject = accessory.gameObject;
+            if (gameObject == null) return;
+
+            var skinnedAccessory = gameObject.GetComponent<SkinnedAccessory>();
+            if (skinnedAccessory == null) return;
+
+            skinnedAccessory.Merge(chaControl);
+        }
+        finally
+        {
+            // register leftover 
+        }
+    }
+}
 
 [DisallowMultipleComponent]
 public class SkinnedAccessory : MonoBehaviour
@@ -17,22 +63,17 @@ public class SkinnedAccessory : MonoBehaviour
 
     private void Start()
     {
-        _chaControl = GetComponentInParent<ChaControl>();
-
-        // When it's initialized without character control. 
-        if (ReferenceEquals(null, _chaControl))
-        {
-            enabled = false;
-            return;
-        }
-
-        TryMerge();
+        // StartCoroutine(nameof(TryMerge));
     }
 
-    private void TryMerge()
+    public void Merge(ChaControl chaControl)
     {
-        // TryGetSkinnedBones includes dictionary check and chaControl checks.
-        if (ReferenceEquals(_chaControl, null) || !SkinnedBones.TryGetSkinnedBones(_chaControl, out var dict)) return;
+        StartCoroutine(TryMerge(chaControl));
+    }
+
+    private IEnumerator TryMerge(ChaControl _chaControl)
+    {
+        if (ReferenceEquals(_chaControl, null) || !SkinnedBones.TryGetSkinnedBones(_chaControl, out var dict)) yield break;
         meshRenderers.ForEach(smr =>
         {
             smr.enabled = false;
@@ -43,17 +84,28 @@ public class SkinnedAccessory : MonoBehaviour
 
     private IEnumerator MergeCoroutine(SkinnedMeshRenderer smr, [NotNull] IReadOnlyDictionary<string, Transform> dict)
     {
-        // Sometimes it's not really null.
-        // So gotta double check object wise and unity wise. it looks dumb tbh
-        smr.bones = smr.bones
-            .Select(boneTransform => dict.TryGetValue(boneTransform.name, out var bone) ? bone : null)
-            .ToArray();
-        smr.enabled = true;
-        smr.localBounds = bound;
+        try
+        {
+            // Sometimes it's not really null.
+            // So gotta double check object wise and unity wise. it looks dumb tbh
+            smr.bones = smr.bones
+                .Select(boneTransform =>
+                    !ReferenceEquals(boneTransform, null) && dict.TryGetValue(boneTransform.name, out var bone)
+                        ? bone
+                        : null
+                )
+                .ToArray();
+            smr.enabled = true;
+            smr.localBounds = bound;
 
-        // well shit if i could track coroutines like god damn async
-        _done++;
-        if (_done == meshRenderers.Count) DestroyImmediate(skeleton);
+            // well shit if i could track coroutines like god damn async
+        }
+        finally
+        {
+            _done++;
+            if (_done == meshRenderers.Count) Destroy(skeleton);
+        }
+
         yield break;
     }
 }

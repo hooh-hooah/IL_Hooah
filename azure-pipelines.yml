@@ -4,7 +4,9 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-- master
+  tags:
+    include:
+    - v*
 
 pool:
   vmImage: 'windows-latest'
@@ -19,22 +21,31 @@ steps:
 
 - task: NuGetCommand@2
   inputs:
+    command: 'restore'
     restoreSolution: '$(solution)'
+    feedsToUse: 'config'
+    nugetConfigPath: './nuget.config'
 
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+    msbuildArgs: '/p:SkipInvalidConfigurations=true'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+    msbuildArchitecture: 'x64'
+    createLogFile: true
 
-- task: VSTest@2
+- task: GitHubRelease@1
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-- task: GitHubComment@0
-  inputs:
-    gitHubConnection: 'hooh-hooah'
-    repositoryName: '$(Build.Repository.Name)'
-    id: '1'
-    comment: 'hey nice'
+    gitHubConnection: 'Azure Automatic Build Setup'
+    repositoryName: 'hooh-hooah/IL_Hooah'
+    action: 'create'
+    target: '$(Build.SourceVersion)'
+    tagSource: 'gitTag'
+    tagPattern: 'v*'
+    title: 'IL_Hooah Release $(Build.SourceVersion)'
+    assets: |
+      AI_Hooah.dll
+      HS2_Hooah.dll
+    changeLogCompareToRelease: 'lastFullRelease'
+    changeLogType: 'commitBased'

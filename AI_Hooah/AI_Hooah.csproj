@@ -72,7 +72,7 @@
           <Private>True</Private>
         </Reference>
         <Reference Include="UnityEngine.ParticleSystemModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <HintPath>..\..\..\..\AI-Syoujyo\StudioNEOV2_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+          <HintPath>..\..\..\AI-Syoujyo\StudioNEOV2_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
         </Reference>
     </ItemGroup>
     <ItemGroup>
@@ -90,15 +90,14 @@
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <PropertyGroup>
         <PostBuildEvent>
+            mkdir "$(TargetDir)final"
+            copy /Y "$(TargetDir)$(AssemblyName).dll" "$(TargetDir)final\$(ProjectName).dll"
+
+            if not [$(AIPath)] == "" (
+            if exist "$(AIPath)" (
             copy /Y "$(TargetDir)$(AssemblyName).dll" "$(AIPath)$(ProjectName).dll"
+            )
+            )
         </PostBuildEvent>
     </PropertyGroup>
-    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-         Other similar extension points exist, see Microsoft.Common.targets.
-    <Target Name="BeforeBuild">
-    </Target>
-    <Target Name="AfterBuild">
-    </Target>
-    -->
-
 </Project>

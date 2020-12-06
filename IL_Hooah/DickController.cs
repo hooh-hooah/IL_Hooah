@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,20 +22,6 @@ public class DickController : MonoBehaviour
         {"push", DickShapes.Push},
         {"pushfskin", DickShapes.PushForwardSkin}
     };
-
-    public AudioClip[] pewSounds;
-    public AudioSource audioPlayer;
-    private Random _random = new Random();
-    private Animator _animator;
-
-    public void PlayPew()
-    {
-        if (!pewSounds.Any() || audioPlayer == null) return;
-        audioPlayer.Stop();
-        var randomIndex = _random.Next(0, pewSounds.Length - 1);
-        audioPlayer.pitch =  (_animator != null ? _animator.speed : 1f) + Convert.ToSingle(_random.NextDouble()*0.4);
-        audioPlayer.PlayOneShot(pewSounds[randomIndex]);
-    }
     
     public GameObject curveEnd;
     public GameObject curveMiddle;
@@ -75,7 +61,6 @@ public class DickController : MonoBehaviour
 
     private void Start()
     {
-        _animator = GetComponent<Animator>();
         _dickTransforms = dickChains.Select(o => o.transform).ToArray();
         foreach (var i in Enumerable.Range(0, dickMesh.sharedMesh.blendShapeCount))
         {

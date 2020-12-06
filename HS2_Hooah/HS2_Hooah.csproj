@@ -80,7 +80,7 @@
             <Private>True</Private>
         </Reference>
         <Reference Include="UnityEngine.ParticleSystemModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <HintPath>..\..\..\..\suqa\HoneySelect2_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+          <HintPath>..\..\..\suqa\StudioNEOV2_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
         </Reference>
     </ItemGroup>
     <ItemGroup>
@@ -95,15 +95,14 @@
     <Import Project="..\IL_Hooah\IL_Hooah.projitems" Label="Shared" />
     <PropertyGroup>
         <PostBuildEvent>
+            mkdir "$(TargetDir)final"
+            copy /Y "$(TargetDir)$(AssemblyName).dll" "$(TargetDir)final\$(ProjectName).dll"
+
+            if not [$(HS2Path)] == "" (
+            if exist "$(HS2Path)" (
             copy /Y "$(TargetDir)$(AssemblyName).dll" "$(HS2Path)$(ProjectName).dll"
+            )
+            )
         </PostBuildEvent>
     </PropertyGroup>
-    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-         Other similar extension points exist, see Microsoft.Common.targets.
-    <Target Name="BeforeBuild">
-    </Target>n
-    <Target Name="AfterBuild">
-    </Target>
-    -->
-
 </Project>
