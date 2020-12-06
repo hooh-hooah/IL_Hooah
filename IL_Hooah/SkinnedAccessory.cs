@@ -1,9 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using AIChara;
-using BepInEx.Harmony;
 using HarmonyLib;
 using HooahComponents.Utility;
 using JetBrains.Annotations;
@@ -14,23 +14,37 @@ public static class SkinnedAccessoryHook
     public static void RegisterHook()
     {
         var harmony = new Harmony("IL_HooahSkinnedAccessory");
+        #if AI
         harmony.Patch(AccessTools.Method(typeof(ChaControl).GetNestedType("<ChangeAccessoryAsync>c__Iterator12", AccessTools.all), "MoveNext"),
             null,
-            new HarmonyMethod(typeof(SkinnedAccessoryHook), nameof(RegisterQueue)),
-            null);
+            new HarmonyMethod(typeof(SkinnedAccessoryHook), nameof(RegisterQueue)));
+        #elif HS2
+        harmony.Patch(AccessTools.Method(typeof(ChaControl).GetNestedType("<ChangeAccessoryAsync>d__506", AccessTools.all), "MoveNext"),
+            null,
+            new HarmonyMethod(typeof(SkinnedAccessoryHook).GetMethod(nameof(RegisterQueue)))
+        );
+        #endif
     }
 
     public static void RegisterQueue(object __instance)
     {
         var traverse = Traverse.Create(__instance);
+
+        #if AI
         var chaControl = traverse.Field("$this")?.GetValue<ChaControl>();
         if (chaControl == null) return;
 
         var slotField = Traverse.Create(__instance)?.Field("$locvar0");
         if (slotField == null) return;
-
         var slotValue = slotField.Field<int>("slotNo").Value;
         if (slotValue < 0) return;
+        #elif HS2
+        var chaControl = traverse.Field("<>4__this")?.GetValue<ChaControl>();
+        if (chaControl == null) return;
+
+        var slotValue = traverse.Field<int>("slotNo").Value;
+        if (slotValue < 0) return;
+        #endif
 
         try
         {

@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Harmony;
+using HarmonyLib;
 using HooahComponents.Hooks;
 
 [BepInPlugin(GUID, "HS2_Hooah", VERSION)]
@@ -10,7 +11,7 @@ public class HooahPlugin : BaseUnityPlugin
 
     private void Start()
     {
-        HarmonyWrapper.PatchAll(typeof(Hooks));
+        Harmony.CreateAndPatchAll(typeof(Hooks));
         SkinnedAccessoryHook.RegisterHook();
     }
 }

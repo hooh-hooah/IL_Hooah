@@ -33,6 +33,26 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/AI_Hooah/AI_Hooah.csproj">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/AI_Hooah/Plugin.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/HS2_Hooah/HS2_Hooah.csproj">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/HS2_Hooah/Plugin.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/IL_Hooah/DickController.cs">
           <value>
             <set />
@@ -53,12 +73,22 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/IL_Hooah/PewSpark.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/IL_Hooah/RailedTracker.cs">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/IL_Hooah/Serialization/HooahComponentInfo.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/IL_Hooah/SkinnedAccessory.cs">
           <value>
             <set />
           </value>
