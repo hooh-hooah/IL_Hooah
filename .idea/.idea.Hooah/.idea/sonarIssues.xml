@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="issues">
+    <option name="index">
+      <map>
+        <entry key="$PROJECT_DIR$/../../himates/AIHSModding/Assembly-CSharp.csproj">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../himates/AIHSModding/Assets/!ModdingToolFiles/SoundContainer.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../himates/AIHSModding/Assets/!ModdingToolFiles/hooah_Extension/RailedTracker.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../himates/AIHSModding/Assets/!ModdingToolFiles/hooah_Extension/SoundContainer.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../himates/AIHSModding/Assets/!ModdingToolFiles/hooah_Extension/SoundContainer1.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../himates/AIHSModding/Assets/ModdingResource/@STUDIO_ASSETS/Before 2020 April/Pistons/mod.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/IL_Hooah/DickController.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/IL_Hooah/Hooks/Hooks.AdvancedStudioItems.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/IL_Hooah/IL_Hooah.shproj">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/IL_Hooah/LiquidHangController.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/IL_Hooah/RailedTracker.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/IL_Hooah/Serialization/HooahComponentInfo.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/IL_Hooah/SoundContainer.cs">
+          <value>
+            <set />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
