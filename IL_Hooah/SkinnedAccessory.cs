@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using AIChara;
+using BepInEx.Logging;
 using HarmonyLib;
 using HooahComponents.Utility;
 using JetBrains.Annotations;
@@ -11,57 +12,114 @@ using UnityEngine;
 
 public static class SkinnedAccessoryHook
 {
+    public static ManualLogSource Logger { get; set; }
+
+    private class CoroutineFields
+    {
+        public readonly FieldInfo ChaControl;
+        public readonly FieldInfo SlotNo;
+        public readonly Type Type;
+        public readonly bool Valid;
+
+        public CoroutineFields(Type type)
+        {
+            Type = type;
+            var fields = type.GetFields(AccessTools.all);
+            foreach (var fieldInfo in fields)
+            {
+                if (fieldInfo.Name == "slotNo" && fieldInfo.FieldType.Name == "Int32")
+                {
+                    SlotNo = fieldInfo;
+                    if (ChaControl == null) continue;
+                    Valid = true;
+                    break;
+                } 
+                
+                if (fieldInfo.FieldType.Name == "ChaControl" && fieldInfo.Name.Contains("this")) {
+                    ChaControl = fieldInfo;
+                    if (SlotNo == null) continue;
+                    Valid = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    private static CoroutineFields _fields;
+    
     public static void RegisterHook()
     {
         var harmony = new Harmony("IL_HooahSkinnedAccessory");
-        #if AI
-        harmony.Patch(AccessTools.Method(typeof(ChaControl).GetNestedType("<ChangeAccessoryAsync>c__Iterator12", AccessTools.all), "MoveNext"),
-            null,
+
+        // Find Specific Coroutine Type with parameter.
+        _fields = typeof(ChaControl)
+            .GetNestedTypes(AccessTools.all)
+            .Where(x => x.Name.StartsWith("<ChangeAccessoryAsync>"))
+            .Select(x => new CoroutineFields(x)).FirstOrDefault(x => x.Valid);
+
+        if (_fields == null || !_fields.Valid)
+        {
+            Logger.LogMessage("Failed to find Accessory Initialization Coroutine! Aborting Skinned Accessory Hooking Procedure.");
+            return;
+        }
+
+        harmony.Patch(AccessTools.Method(_fields.Type, "MoveNext"), null,
             new HarmonyMethod(typeof(SkinnedAccessoryHook), nameof(RegisterQueue)));
-        #elif HS2
-        harmony.Patch(AccessTools.Method(typeof(ChaControl).GetNestedType("<ChangeAccessoryAsync>d__506", AccessTools.all), "MoveNext"),
-            null,
-            new HarmonyMethod(typeof(SkinnedAccessoryHook).GetMethod(nameof(RegisterQueue)))
-        );
-        #endif
+        Logger.LogMessage("Successfully Hooked the Skinned Accessory Initializer.");
     }
 
     public static void RegisterQueue(object __instance)
     {
-        var traverse = Traverse.Create(__instance);
-
-        #if AI
-        var chaControl = traverse.Field("$this")?.GetValue<ChaControl>();
-        if (chaControl == null) return;
-
-        var slotField = Traverse.Create(__instance)?.Field("$locvar0");
-        if (slotField == null) return;
-        var slotValue = slotField.Field<int>("slotNo").Value;
-        if (slotValue < 0) return;
-        #elif HS2
-        var chaControl = traverse.Field("<>4__this")?.GetValue<ChaControl>();
-        if (chaControl == null) return;
-
-        var slotValue = traverse.Field<int>("slotNo").Value;
-        if (slotValue < 0) return;
-        #endif
+        if (__instance.GetType() != _fields.Type)
+        {
+            Logger.LogError("SkinnedAccessory hook is not called by correct coroutine class!");
+            return;
+        }
 
         try
         {
-            var accessory = chaControl.cmpAccessory[slotValue];
-            if (accessory == null) return;
+            var chaControl = (ChaControl) _fields.ChaControl.GetValue(__instance);
+            if (chaControl == null) throw new Exception("Unable to find character controller.");
+
+            var slotId = (int) _fields.SlotNo.GetValue(__instance);
+            if (slotId < 0) throw new Exception("Unable to obtain accessory slot id from the coroutine.");
+
+            // TODO: How to integrate with more accessories?
+            var accessory = chaControl.cmpAccessory[slotId];
+            if (accessory == null)
+            {
+#if DEBUG
+                throw new Exception("Failed to find corrent accessory slot.");
+#endif
+                return;
+            }
 
             var gameObject = accessory.gameObject;
-            if (gameObject == null) return;
+            if (gameObject == null)
+            {
+#if DEBUG
+                throw new Exception("Unable to find GameObject from the CmpAccessory Component!");
+#endif
+
+                return;
+            }
 
             var skinnedAccessory = gameObject.GetComponent<SkinnedAccessory>();
-            if (skinnedAccessory == null) return;
+            if (skinnedAccessory == null)
+            {
+#if DEBUG
+                throw new Exception("Unable to find Skinned Accesory.");
+#endif
+                return;
+            }
 
             skinnedAccessory.Merge(chaControl);
         }
-        finally
+        catch (Exception e)
         {
-            // register leftover 
+            Logger.LogError("Failed to attach SkinnedAccessory to the character controller!");
+            Logger.LogError(e.Message);
+            Logger.LogError(e.StackTrace);
         }
     }
 }
