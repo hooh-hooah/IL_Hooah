@@ -152,7 +152,7 @@ public class SkinnedAccessory : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(nameof(TryMerge));
+        // StartCoroutine(nameof(TryMerge));
     }
 
     public void Merge(ChaControl chaControl)
