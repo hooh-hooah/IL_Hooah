@@ -75,13 +75,17 @@ public static class SkinnedAccessoryHook
 
         if (_fields == null || !_fields.Valid)
         {
+#if DEBUG
             Logger.LogMessage("Failed to find Accessory Initialization Coroutine! Aborting Skinned Accessory Hooking Procedure.");
+#endif
             return;
         }
 
         harmony.Patch(AccessTools.Method(_fields.Type, "MoveNext"), null,
             new HarmonyMethod(typeof(SkinnedAccessoryHook), nameof(RegisterQueue)));
+#if DEBUG
         Logger.LogMessage("Successfully Hooked the Skinned Accessory Initializer.");
+#endif
     }
 
     public static void RegisterQueue(object __instance)
