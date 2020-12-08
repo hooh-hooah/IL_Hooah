@@ -8,6 +8,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using HooahComponents.Utility;
 using JetBrains.Annotations;
+using Studio;
 using UnityEngine;
 
 public static class SkinnedAccessoryHook
@@ -33,9 +34,10 @@ public static class SkinnedAccessoryHook
                     if (ChaControl == null) continue;
                     Valid = true;
                     break;
-                } 
-                
-                if (fieldInfo.FieldType.Name == "ChaControl" && fieldInfo.Name.Contains("this")) {
+                }
+
+                if (fieldInfo.FieldType.Name == "ChaControl" && fieldInfo.Name.Contains("this"))
+                {
                     ChaControl = fieldInfo;
                     if (SlotNo == null) continue;
                     Valid = true;
@@ -46,10 +48,24 @@ public static class SkinnedAccessoryHook
     }
 
     private static CoroutineFields _fields;
-    
+
+    public static void YeetOutHierarchy(OCIChar _ociChar, Transform _transformRoot, Dictionary<int, Info.BoneInfo> _dicBoneInfo)
+    {
+        foreach (var accessory in _ociChar.charInfo.cmpAccessory)
+        {
+            if (accessory == null) continue;
+            var skinnedAccessory = accessory.GetComponent<SkinnedAccessory>();
+            if (skinnedAccessory == null) continue;
+            skinnedAccessory.skeleton.transform.parent = null;
+        }
+    }
+
     public static void RegisterHook()
     {
         var harmony = new Harmony("IL_HooahSkinnedAccessory");
+
+        // To prevent accessory to slow down recursive hierarchy traversal.
+        harmony.Patch(AccessTools.Method(typeof(AddObjectAssist), "InitBone"), new HarmonyMethod(typeof(SkinnedAccessoryHook), nameof(YeetOutHierarchy)));
 
         // Find Specific Coroutine Type with parameter.
         _fields = typeof(ChaControl)
@@ -117,6 +133,7 @@ public static class SkinnedAccessoryHook
         }
         catch (Exception e)
         {
+            // I hope you dont see this one ever again.
             Logger.LogError("Failed to attach SkinnedAccessory to the character controller!");
             Logger.LogError(e.Message);
             Logger.LogError(e.StackTrace);
@@ -135,7 +152,7 @@ public class SkinnedAccessory : MonoBehaviour
 
     private void Start()
     {
-        // StartCoroutine(nameof(TryMerge));
+        StartCoroutine(nameof(TryMerge));
     }
 
     public void Merge(ChaControl chaControl)
@@ -158,24 +175,18 @@ public class SkinnedAccessory : MonoBehaviour
     {
         try
         {
-            // Sometimes it's not really null.
-            // So gotta double check object wise and unity wise. it looks dumb tbh
             smr.bones = smr.bones
                 .Select(boneTransform =>
-                    !ReferenceEquals(boneTransform, null) && dict.TryGetValue(boneTransform.name, out var bone)
-                        ? bone
-                        : null
+                    !ReferenceEquals(boneTransform, null) && dict.TryGetValue(boneTransform.name, out var bone) ? bone : null
                 )
                 .ToArray();
             smr.enabled = true;
             smr.localBounds = bound;
-
-            // well shit if i could track coroutines like god damn async
         }
         finally
         {
             _done++;
-            if (_done == meshRenderers.Count) Destroy(skeleton);
+            if (_done == meshRenderers.Count) Destroy(skeleton); // 😂👌
         }
 
         yield break;
