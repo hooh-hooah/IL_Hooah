@@ -1,10 +1,8 @@
-﻿﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Serialization;
-using Random = System.Random;
 
 public class DickController : MonoBehaviour
 {
@@ -16,23 +14,20 @@ public class DickController : MonoBehaviour
     }
 
     // I don't want to search every single blendshape every fucking time.
-    private static readonly Dictionary<string, DickShapes> _blendshapeDictionary = new Dictionary<string, DickShapes>
+    private static readonly Dictionary<string, DickShapes> BlendshapeDictionary = new Dictionary<string, DickShapes>
     {
         {"pull", DickShapes.Pull},
         {"push", DickShapes.Push},
         {"pushfskin", DickShapes.PushForwardSkin}
     };
-    
+
     public GameObject curveEnd;
     public GameObject curveMiddle;
     public GameObject curveStart;
     public GameObject[] dickChains;
     public SkinnedMeshRenderer dickMesh;
-
     public float dockDistance = 2.1f;
-
     [FormerlySerializedAs("steepness")] public float pullLength = 1f;
-
     public Transform pullProxy;
     public Transform pullProxyRoot;
 
@@ -40,14 +35,13 @@ public class DickController : MonoBehaviour
     public bool useNearestNavigator;
 
     public bool useNearestProxy;
-
     private readonly List<int> _shapeKeyIndex = new List<int>();
     private bool _canMorph;
     private Transform[] _dickTransforms;
     private float _firstDistance;
-    private DickNavigator dickNavigator;
-    private float pullFactor;
-    private Transform pullTransform;
+    private DickNavigator _dickNavigator;
+    private float _pullFactor;
+    private Transform _pullTransform;
 
     private Vector3 EndPos => curveEnd?.transform.position ?? Vector3.zero;
     private Vector3 MidPos => curveMiddle?.transform.position ?? Vector3.zero;
@@ -64,41 +58,41 @@ public class DickController : MonoBehaviour
         _dickTransforms = dickChains.Select(o => o.transform).ToArray();
         foreach (var i in Enumerable.Range(0, dickMesh.sharedMesh.blendShapeCount))
         {
-            var name = dickMesh.sharedMesh.GetBlendShapeName(i);
-            if (_blendshapeDictionary.ContainsKey(name))
-                _shapeKeyIndex.Insert((int) _blendshapeDictionary[name], i);
+            var shapeName = dickMesh.sharedMesh.GetBlendShapeName(i);
+            if (BlendshapeDictionary.ContainsKey(shapeName))
+                _shapeKeyIndex.Insert((int) BlendshapeDictionary[shapeName], i);
         }
-
-        _canMorph = _shapeKeyIndex.Count == _blendshapeDictionary.Count;
+        _canMorph = _shapeKeyIndex.Count == BlendshapeDictionary.Count;
         _firstDistance = BenisLength;
-
         StartCoroutine(nameof(UpdateProxyInformation));
     }
 
+    /**
+     * There gotta be better way to update this shit
+     * But we need to check if it's null every single frame.
+     * and resharper said GameObject == null is expensive, and referenceequals is not
+     * https://forum.unity.com/threads/optimizing-null-check-null-vs-bool-out-functions.482118/
+     */
     private void Update()
     {
-        // But we need to check if it's null every single frame.
-        // and resharper said GameObject == null is expensive, and referenceequals is not
-        // https://forum.unity.com/threads/optimizing-null-check-null-vs-bool-out-functions.482118/
-
-        if (!ReferenceEquals(dickNavigator, null))
+        if (!ReferenceEquals(_dickNavigator, null))
         {
-            var dist = Vector3.Distance(dickNavigator.dickMidPoint.position, StartPos);
+            var dist = Vector3.Distance(_dickNavigator.dickMidPoint.position, StartPos);
             var distFactor = dist / (dockDistance * 1.25f * BenisScale);
             var lerpFactor = 1f - Mathf.Clamp(distFactor - 1f, 0f, 1f);
             var up = curveStart.transform.up;
-            curveMiddle.transform.position = Vector3.Lerp(StartPos + up * (1f * BenisScale), dickNavigator.dickMidPoint.position, lerpFactor);
-            curveEnd.transform.position = Vector3.Lerp(StartPos + up * (2f * BenisScale), dickNavigator.dickEndPoint.position, lerpFactor);
+            curveMiddle.transform.position = Vector3.Lerp(StartPos + up * (1f * BenisScale), _dickNavigator.dickMidPoint.position, lerpFactor);
+            curveEnd.transform.position = Vector3.Lerp(StartPos + up * (2f * BenisScale), _dickNavigator.dickEndPoint.position, lerpFactor);
         }
 
-        var pTransform = pullTransform ? pullTransform : pullProxy;
-        if (ReferenceEquals(pTransform, null)) return;
+        var pTransform = _pullTransform ? _pullTransform : pullProxy;
+        if (pTransform == null) return;
 
         var position = pullProxyRoot.position;
         var position1 = pTransform.position;
         var distance = Vector3.Distance(position, position1);
         var crossDot = Vector3.Dot((position - position1).normalized, pullProxyRoot.up); // 1 to -1, 0 is exact match.
-        pullFactor = Mathf.Clamp(distance * crossDot / pullLength * BenisScale, -1f, 1f);
+        _pullFactor = Mathf.Clamp(distance * crossDot / pullLength * BenisScale, -1f, 1f);
     }
 
     private void LateUpdate()
@@ -109,17 +103,17 @@ public class DickController : MonoBehaviour
 
         if (_canMorph && _shapeKeyIndex != null && _shapeKeyIndex.Count > 0)
         {
-            if (pullFactor >= 0)
+            if (_pullFactor >= 0)
             {
                 dickMesh.SetBlendShapeWeight(_shapeKeyIndex[(int) DickShapes.Push], 0f);
                 dickMesh.SetBlendShapeWeight(_shapeKeyIndex[(int) DickShapes.PushForwardSkin], 0f);
-                dickMesh.SetBlendShapeWeight(_shapeKeyIndex[(int) DickShapes.Pull], Mathf.Min(50, pullFactor * 100));
+                dickMesh.SetBlendShapeWeight(_shapeKeyIndex[(int) DickShapes.Pull], Mathf.Min(50, _pullFactor * 100));
             }
             else
             {
-                pullFactor *= -1;
-                dickMesh.SetBlendShapeWeight(_shapeKeyIndex[(int) DickShapes.Push], pullFactor * 100);
-                dickMesh.SetBlendShapeWeight(_shapeKeyIndex[(int) DickShapes.PushForwardSkin], pullFactor * 100);
+                _pullFactor *= -1;
+                dickMesh.SetBlendShapeWeight(_shapeKeyIndex[(int) DickShapes.Push], _pullFactor * 100);
+                dickMesh.SetBlendShapeWeight(_shapeKeyIndex[(int) DickShapes.PushForwardSkin], _pullFactor * 100);
                 dickMesh.SetBlendShapeWeight(_shapeKeyIndex[(int) DickShapes.Pull], 0f);
             }
         }
@@ -139,7 +133,7 @@ public class DickController : MonoBehaviour
                 if (dir != Vector3.zero)
                 {
                     var q = Quaternion.LookRotation(dir, transform.right);
-                    // how do i 
+                    // how do i
                     q *= Quaternion.Euler(90, 0, 0);
                     q *= Quaternion.Euler(0, 90, 0);
                     prvTransform.rotation = q;
@@ -190,18 +184,18 @@ public class DickController : MonoBehaviour
         {
             if (useNearestNavigator)
                 if (DickNavigator.Instances.Count > 0)
-                    dickNavigator = DickNavigator.Instances
+                    _dickNavigator = DickNavigator.Instances
                         .OrderBy(x => Vector3.Distance(x.dickMidPoint.position, StartPos))
                         .First();
 
             if (useNearestProxy)
             {
                 if (DickPuller.Instances.Count > 0)
-                    pullTransform = DickPuller.Instances
+                    _pullTransform = DickPuller.Instances
                         .OrderBy(x => Vector3.Distance(x.transform.position, pullProxyRoot.transform.position))
                         .First().gameObject.transform;
                 else
-                    pullTransform = pullProxy;
+                    _pullTransform = pullProxy;
             }
 
             // We don't need to find Nearest Proxies every single frame.
