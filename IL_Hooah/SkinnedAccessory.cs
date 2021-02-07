@@ -13,41 +13,8 @@ using UnityEngine;
 
 public static class SkinnedAccessoryHook
 {
-    public static ManualLogSource Logger { get; set; }
-
-    private class CoroutineFields
-    {
-        public readonly FieldInfo ChaControl;
-        public readonly FieldInfo SlotNo;
-        public readonly Type Type;
-        public readonly bool Valid;
-
-        public CoroutineFields(Type type)
-        {
-            Type = type;
-            var fields = type.GetFields(AccessTools.all);
-            foreach (var fieldInfo in fields)
-            {
-                if (fieldInfo.Name == "slotNo" && fieldInfo.FieldType.Name == "Int32")
-                {
-                    SlotNo = fieldInfo;
-                    if (ChaControl == null) continue;
-                    Valid = true;
-                    break;
-                }
-
-                if (fieldInfo.FieldType.Name == "ChaControl" && fieldInfo.Name.Contains("this"))
-                {
-                    ChaControl = fieldInfo;
-                    if (SlotNo == null) continue;
-                    Valid = true;
-                    break;
-                }
-            }
-        }
-    }
-
     private static CoroutineFields _fields;
+    public static ManualLogSource Logger { get; set; }
 
     public static void YeetOutHierarchy(OCIChar _ociChar, Transform _transformRoot, Dictionary<int, Info.BoneInfo> _dicBoneInfo)
     {
@@ -143,16 +110,48 @@ public static class SkinnedAccessoryHook
             Logger.LogError(e.StackTrace);
         }
     }
+
+    private class CoroutineFields
+    {
+        public readonly FieldInfo ChaControl;
+        public readonly FieldInfo SlotNo;
+        public readonly Type Type;
+        public readonly bool Valid;
+
+        public CoroutineFields(Type type)
+        {
+            Type = type;
+            var fields = type.GetFields(AccessTools.all);
+            foreach (var fieldInfo in fields)
+            {
+                if (fieldInfo.Name == "slotNo" && fieldInfo.FieldType.Name == "Int32")
+                {
+                    SlotNo = fieldInfo;
+                    if (ChaControl == null) continue;
+                    Valid = true;
+                    break;
+                }
+
+                if (fieldInfo.FieldType.Name == "ChaControl" && fieldInfo.Name.Contains("this"))
+                {
+                    ChaControl = fieldInfo;
+                    if (SlotNo == null) continue;
+                    Valid = true;
+                    break;
+                }
+            }
+        }
+    }
 }
 
 [DisallowMultipleComponent]
 public class SkinnedAccessory : MonoBehaviour
 {
     private static readonly Bounds bound = new Bounds(new Vector3(0f, 10f, 0f), new Vector3(20f, 20f, 20f));
-    private ChaControl _chaControl;
-    private int _done;
     public List<SkinnedMeshRenderer> meshRenderers;
     public GameObject skeleton;
+    private ChaControl _chaControl;
+    private int _done;
 
     private void Start()
     {

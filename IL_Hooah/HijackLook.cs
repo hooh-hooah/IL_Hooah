@@ -13,6 +13,10 @@ public class HijackLook : MonoBehaviour
         StartCoroutine("FindTarget");
     }
 
+    private void Update()
+    {
+    }
+
     private void OnDestroy()
     {
         StopCoroutine("FindTarget");
@@ -42,9 +46,5 @@ public class HijackLook : MonoBehaviour
                 originalTransform = null;
             }
         }
-    }
-
-    private void Update()
-    {
     }
 }

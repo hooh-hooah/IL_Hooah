@@ -13,6 +13,10 @@ public class HijackNeck : MonoBehaviour
         StartCoroutine("FindTarget");
     }
 
+    private void Update()
+    {
+    }
+
     private void OnDestroy()
     {
         StopCoroutine("FindTarget");
@@ -30,28 +34,18 @@ public class HijackNeck : MonoBehaviour
                 lookAtController = chaControl.neckLookCtrl;
                 if (lookAtController != null)
                 {
-                    if (originalTransform == null)
-                    {
-                        originalTransform = lookAtController.target;
-                    }
+                    if (originalTransform == null) originalTransform = lookAtController.target;
 
                     lookAtController.target = enabled ? transform : Camera.main.transform;
                 }
             }
             else
             {
-                if (originalTransform != null && lookAtController != null)
-                {
-                    lookAtController.target = originalTransform;
-                }
+                if (originalTransform != null && lookAtController != null) lookAtController.target = originalTransform;
 
                 lookAtController = null;
                 originalTransform = null;
             }
         }
-    }
-
-    private void Update()
-    {
     }
 }

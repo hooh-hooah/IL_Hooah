@@ -8,17 +8,32 @@ using UnityEngine;
 public class NiceMirrorReflection : MonoBehaviour
 {
     private static bool s_InsideRendering;
-
-    private readonly Hashtable m_ReflectionCameras = new Hashtable(); // Camera -> Camera table
     public bool flipYAxis;
     public float m_ClipPlaneOffset = 0.07f;
     public bool m_DisablePixelLights = true;
+
+    public LayerMask m_ReflectLayers = -1;
+    public int m_TextureSize = 256;
+
+    private readonly Hashtable m_ReflectionCameras = new Hashtable(); // Camera -> Camera table
     private int m_OldReflectionTextureSize;
 
     private RenderTexture m_ReflectionTexture;
 
-    public LayerMask m_ReflectLayers = -1;
-    public int m_TextureSize = 256;
+
+    // Cleanup all the objects we possibly have created
+    private void OnDisable()
+    {
+        if (m_ReflectionTexture)
+        {
+            DestroyImmediate(m_ReflectionTexture);
+            m_ReflectionTexture = null;
+        }
+
+        foreach (DictionaryEntry kvp in m_ReflectionCameras)
+            DestroyImmediate(((Camera) kvp.Value).gameObject);
+        m_ReflectionCameras.Clear();
+    }
 
     // This is called when it's known that the object will be rendered by some
     // camera. We render reflections and do other updates here.
@@ -93,21 +108,6 @@ public class NiceMirrorReflection : MonoBehaviour
             QualitySettings.pixelLightCount = oldPixelLightCount;
 
         s_InsideRendering = false;
-    }
-
-
-    // Cleanup all the objects we possibly have created
-    private void OnDisable()
-    {
-        if (m_ReflectionTexture)
-        {
-            DestroyImmediate(m_ReflectionTexture);
-            m_ReflectionTexture = null;
-        }
-
-        foreach (DictionaryEntry kvp in m_ReflectionCameras)
-            DestroyImmediate(((Camera) kvp.Value).gameObject);
-        m_ReflectionCameras.Clear();
     }
 
 

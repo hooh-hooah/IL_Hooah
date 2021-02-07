@@ -11,9 +11,6 @@ public class FalseChainCreator : MonoBehaviour
 
     private static readonly GeometryUtilityUser guu = new GeometryUtilityUser();
 
-    private readonly QuadRope qr = new QuadRope();
-    private readonly int tluPrecision = 16;
-
     [Header("Other settings")] [Tooltip("If the length of the chain is not large enough it will be stretched")]
     public bool allowStretching;
 
@@ -22,33 +19,23 @@ public class FalseChainCreator : MonoBehaviour
     [Header("Rope")] [Tooltip("If true, Link parameters will be ignored")]
     public bool isRope;
 
-    private float lastStartWidth, lastEndWidth;
-    private Vector2 lastTarget;
-    private Vector3 lastTrgRot;
     public Vector3 linkForward = new Vector3(0, -1, 0);
-    private int linkJoints; // Border links included
-    private Vector2[] linkPositions; // update every frame looking at QuadRope and the Y function
 
     [Header("Link")] public Transform linkPrefab; // Create as many links as linkJoints
 
     public Vector3 linkRotationAxis = new Vector3(0, 1, 0);
-    private Quaternion linkRotationAxisRotation;
     public float linkSize = 1;
-
-    private Transform[] linksTransforms;
 
     [Header("Number of links")] public int numberOfLinks = 15;
 
     [Tooltip("Bigger values will be slower")]
     public int quality = 30; // Number of samples to capture the curve deformation. More = slower
 
-    private float ropeLength;
     public Material ropeMaterial;
 
     [Tooltip("If you want to make a rope instead of a chain, set this to false")]
     public bool rotateEvenLinks = true;
 
-    private float scale;
     public bool showGizmos;
 
     [Header("Start and end points")] public Transform start;
@@ -62,6 +49,22 @@ public class FalseChainCreator : MonoBehaviour
 
     [Tooltip("Always update the position and rotation of the chain links. If true, visibility checks will be skipped, saving some computation")]
     public bool updateWhenOffscreen;
+
+    private readonly QuadRope qr = new QuadRope();
+    private readonly int tluPrecision = 16;
+
+    private float lastStartWidth, lastEndWidth;
+    private Vector2 lastTarget;
+    private Vector3 lastTrgRot;
+    private int linkJoints;          // Border links included
+    private Vector2[] linkPositions; // update every frame looking at QuadRope and the Y function
+    private Quaternion linkRotationAxisRotation;
+
+    private Transform[] linksTransforms;
+
+    private float ropeLength;
+
+    private float scale;
 
     private bool wasRope;
 
@@ -275,7 +278,7 @@ public class FalseChainCreator : MonoBehaviour
             {
                 var lerp = (linkDistance - checkedDistance) / distanciaSegmento;
 
-                x = x + (xNew - x) * lerp; // Mathf.Lerp(x, xNew, lerp)
+                x = x + (xNew - x) * lerp;         // Mathf.Lerp(x, xNew, lerp)
                 v.x = v.x + (vNew.x - v.x) * lerp; // Mathf.Lerp(v, vNew, lerp)
                 v.y = v.y + (vNew.y - v.y) * lerp; // Mathf.Lerp(v, vNew, lerp)
                 linkPositions[link++] = v;

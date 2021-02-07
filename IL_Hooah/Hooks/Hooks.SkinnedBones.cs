@@ -5,7 +5,7 @@ using Studio;
 
 namespace HooahComponents.Hooks
 {
-    public partial class Hooks
+    public class Hooks
     {
         /// <summary>
         ///     Target: AI/HS2 Studio

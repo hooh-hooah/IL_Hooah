@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Linq;
 using UnityEngine;
 using Random = System.Random;
@@ -9,8 +9,8 @@ public class NomiEventConsumer : EventConsumer
     public AudioClip[] _audioClips;
     [SerializeField] private Animator _animator;
     [SerializeField] private AudioSource audioPlayer;
-    private int _eventStored = 0;
     private readonly Random _random = new Random();
+    private int _eventStored;
 
     private void Awake()
     {
@@ -18,10 +18,7 @@ public class NomiEventConsumer : EventConsumer
 
     private void Update()
     {
-        if (_animator.enabled == false)
-        {
-            _animator.enabled = true;
-        } 
+        if (_animator.enabled == false) _animator.enabled = true;
     }
 
     internal override void DoEvent()
@@ -37,7 +34,7 @@ public class NomiEventConsumer : EventConsumer
         if (!_audioClips.Any() || audioPlayer == null) return;
         audioPlayer.Stop();
         var randomIndex = _random.Next(0, _audioClips.Length - 1);
-        audioPlayer.pitch =  Mathf.Min(2f, _animator != null ? _animator.speed : 1f) + Convert.ToSingle(_random.NextDouble()*0.2);
+        audioPlayer.pitch = Mathf.Min(2f, _animator != null ? _animator.speed : 1f) + Convert.ToSingle(_random.NextDouble() * 0.2);
         audioPlayer.PlayOneShot(_audioClips[randomIndex]);
     }
 }

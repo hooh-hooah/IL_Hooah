@@ -3,7 +3,6 @@ using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.Events;
 
-
 public class RailedTracker : MonoBehaviour
 {
     public Transform start;
@@ -12,34 +11,13 @@ public class RailedTracker : MonoBehaviour
     public Transform target;
     public Transform tracker;
     public float dragLerp = 0.3f;
-    private float _factor;
-    private Vector3 _targetNormal;
-    private Vector3 _targetPosition;
 
     public UnityEvent onHitEnd;
     public UnityEvent onHitStart;
     public ushort state;
-
-    public struct TrackCalculation : IJob
-    {
-        public NativeArray<Vector3> v;
-        public float lerp;
-
-        public void Execute()
-        {
-            var t = Mathf.Max(0, Mathf.Min(1, (Mathf.Abs(v[0].x) - v[4].x) / (Mathf.Abs(v[2].x) + Mathf.Abs(v[2].x))));
-            var u = 1f - t;
-            var tt = t * t;
-            var uu = u * u;
-            var p = uu * v[0]; //first term
-            p += 2 * u * t * v[1]; //second term
-            p += tt * v[2]; //third term
-            v[5] = Vector3.Lerp(v[3], p, lerp); // targetPosition
-            v[6] = 2 * (1 - t) * (v[1] - v[0]) + 2 * t * (v[2] - v[1]); // derivative
-            var vec = new Vector3(t, u, 0);
-            v[7] = vec;
-        }
-    }
+    private float _factor;
+    private Vector3 _targetNormal;
+    private Vector3 _targetPosition;
 
     private void LateUpdate()
     {
@@ -74,6 +52,27 @@ public class RailedTracker : MonoBehaviour
         finally
         {
             v.Dispose();
+        }
+    }
+
+    public struct TrackCalculation : IJob
+    {
+        public NativeArray<Vector3> v;
+        public float lerp;
+
+        public void Execute()
+        {
+            var t = Mathf.Max(0, Mathf.Min(1, (Mathf.Abs(v[0].x) - v[4].x) / (Mathf.Abs(v[2].x) + Mathf.Abs(v[2].x))));
+            var u = 1f - t;
+            var tt = t * t;
+            var uu = u * u;
+            var p = uu * v[0];                                          //first term
+            p += 2 * u * t * v[1];                                      //second term
+            p += tt * v[2];                                             //third term
+            v[5] = Vector3.Lerp(v[3], p, lerp);                         // targetPosition
+            v[6] = 2 * (1 - t) * (v[1] - v[0]) + 2 * t * (v[2] - v[1]); // derivative
+            var vec = new Vector3(t, u, 0);
+            v[7] = vec;
         }
     }
 }

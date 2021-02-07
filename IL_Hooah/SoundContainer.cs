@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
-using Random = UnityEngine.Random;
-
 
 public class SoundContainer : MonoBehaviour
 {
-    private AudioSource source;
     public AudioClip[] clips;
     public float pLow;
     public float pHigh;
+    private AudioSource source;
 
     private void Start()
     {

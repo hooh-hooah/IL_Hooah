@@ -3,14 +3,19 @@ using UnityEngine;
 
 public class LookAtIt : MonoBehaviour
 {
-    private GameObject target;
-
     public GameObject turnObject;
+    private GameObject target;
 
     // Use this for initialization
     private void Awake()
     {
         StartCoroutine(nameof(FindTarget));
+    }
+
+    // Update is called once per frame
+    private void Update()
+    {
+        if (target != null) turnObject.transform.LookAt(target.transform);
     }
 
     private void OnDestroy()
@@ -36,11 +41,5 @@ public class LookAtIt : MonoBehaviour
                 if (lam != null) target = lam.gameObject;
             }
         }
-    }
-
-    // Update is called once per frame
-    private void Update()
-    {
-        if (target != null) turnObject.transform.LookAt(target.transform);
     }
 }
