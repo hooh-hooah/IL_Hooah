@@ -25,6 +25,11 @@ public static class SkinnedAccessoryHook
             if (skinnedAccessory == null) continue;
             skinnedAccessory.skeleton.transform.parent = null;
         }
+
+        // The joint corrections/expressions initialized here are the one bone scan that happens before this hook can run
+        // Rerunning the scan below fixes the issue. This corrects issues with joint correction and skinned accessory wearing characters.
+        Component.Destroy(_ociChar.charInfo.objRoot.GetComponent(typeof(CharaUtils.Expression)));
+        _ociChar.charInfo.InitializeExpression(_ociChar.sex);
     }
 
     public static void RegisterHook()
