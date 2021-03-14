@@ -6,7 +6,7 @@ using HooahComponents.Hooks;
 public class HooahPlugin : BaseUnityPlugin
 {
     public const string GUID = "com.hooh.hooah";
-    public const string VERSION = "1.4.2";
+    public const string VERSION = "1.4.3";
 
     private void Start()
     {
