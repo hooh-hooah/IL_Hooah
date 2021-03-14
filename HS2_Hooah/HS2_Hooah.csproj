@@ -79,5 +79,4 @@
             )
         </PostBuildEvent>
     </PropertyGroup>
-    <Import Project="..\IL_DataHelper\IL_DataHelper.projitems" Label="Shared" />
 </Project>
