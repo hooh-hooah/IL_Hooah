@@ -12,7 +12,7 @@
         <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
         <DefineConstants>AI</DefineConstants>
         <FileAlignment>512</FileAlignment>
-        <SignAssembly>true</SignAssembly>
+        <SignAssembly>false</SignAssembly>
         <AssemblyOriginatorKeyFile>AI_Hooah.snk</AssemblyOriginatorKeyFile>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -39,12 +39,13 @@
         <Reference Include="System.Core" />
         <Reference Include="System.Data" />
         <Reference Include="System.Xml" />
-        <PackageReference Include="IllusionLibs.BepInEx" Version="5.3.0.0" />
-        <PackageReference Include="IllusionLibs.BepInEx.Harmony" Version="2.0.6" />
-        <PackageReference Include="IllusionLibs.AIGirl.Assembly-CSharp" Version="2020.5.29" />
-        <PackageReference Include="IllusionLibs.AIGirl.UnityEngine.CoreModule" Version="2018.2.21.1" />
-        <PackageReference Include="IllusionLibs.AIGirl.UnityEngine.AnimationModule" Version="2018.2.21.1" />
-        <PackageReference Include="IllusionLibs.AIGirl.UnityEngine.AudioModule" Version="2018.2.21.1" />
+        <PackageReference Include="IllusionLibs.AIGirl.UniRx" Version="2020.5.29.2" />
+        <PackageReference Include="IllusionLibs.BepInEx" Version="5.4.4" />
+        <PackageReference Include="IllusionLibs.BepInEx.Harmony" Version="2.2.0.1" />
+        <PackageReference Include="IllusionLibs.AIGirl.Assembly-CSharp" Version="2020.5.29.2" />
+        <PackageReference Include="IllusionLibs.AIGirl.UnityEngine.CoreModule" Version="2018.2.21.3" />
+        <PackageReference Include="IllusionLibs.AIGirl.UnityEngine.AnimationModule" Version="2018.2.21.3" />
+        <PackageReference Include="IllusionLibs.AIGirl.UnityEngine.AudioModule" Version="2018.2.21.3" />
         <Reference Include="UnityEngine.ParticleSystemModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\..\..\AI-Syoujyo\StudioNEOV2_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
         </Reference>
@@ -74,4 +75,5 @@
             )
         </PostBuildEvent>
     </PropertyGroup>
+    <Import Project="..\IL_DataHelper\IL_DataHelper.projitems" Label="Shared" />
 </Project>

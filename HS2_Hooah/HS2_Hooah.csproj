@@ -9,10 +9,10 @@
         <AppDesignerFolder>Properties</AppDesignerFolder>
         <RootNamespace>HooahComponents</RootNamespace>
         <AssemblyName>HooahComponents</AssemblyName>
-        <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
         <DefineConstants>HS2</DefineConstants>
         <FileAlignment>512</FileAlignment>
-        <SignAssembly>true</SignAssembly>
+        <SignAssembly>false</SignAssembly>
         <AssemblyOriginatorKeyFile>HS2_Hooah.snk</AssemblyOriginatorKeyFile>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -35,19 +35,20 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="HarmonyX" Version="2.2.0" />
-        <PackageReference Include="IllusionLibs.AIGirl.UnityEngine.CoreModule" Version="2018.2.21.1">
+        <PackageReference Include="HarmonyX" Version="2.3.2" />
+        <PackageReference Include="IllusionLibs.AIGirl.UnityEngine.CoreModule" Version="2018.2.21.3">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="IllusionLibs.HoneySelect2.Assembly-CSharp" Version="2020.5.29.2" />
         <PackageReference Include="IllusionLibs.HoneySelect2.Assembly-CSharp-firstpass" Version="2020.5.29.2" />
-        <PackageReference Include="IllusionLibs.BepInEx" Version="5.3.0.0" />
+        <PackageReference Include="IllusionLibs.BepInEx" Version="5.4.4" />
 <!--        <PackageReference Include="IllusionLibs.BepInEx.Harmony" Version="2.0.6" />-->
         <PackageReference Include="IllusionLibs.HoneySelect2.IL" Version="2020.5.29.2" />
-        <PackageReference Include="IllusionLibs.HoneySelect2.UnityEngine.AnimationModule" Version="2018.4.11.1" />
+        <PackageReference Include="IllusionLibs.HoneySelect2.UniRx" Version="2020.5.29.2" />
+        <PackageReference Include="IllusionLibs.HoneySelect2.UnityEngine.AnimationModule" Version="2018.4.11.2" />
         <PackageReference Include="IllusionLibs.HoneySelect2.UnityEngine.AudioModule" Version="2018.4.11.2" />
-        <PackageReference Include="IllusionLibs.HoneySelect2.UnityEngine.CoreModule" Version="2018.4.11.1" />
+        <PackageReference Include="IllusionLibs.HoneySelect2.UnityEngine.CoreModule" Version="2018.4.11.2" />
         <Reference Include="System" />
         <Reference Include="System.Core" />
         <Reference Include="System.Data" />
@@ -78,4 +79,5 @@
             )
         </PostBuildEvent>
     </PropertyGroup>
+    <Import Project="..\IL_DataHelper\IL_DataHelper.projitems" Label="Shared" />
 </Project>

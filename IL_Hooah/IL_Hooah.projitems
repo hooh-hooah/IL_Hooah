@@ -26,6 +26,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)SkinnedAccessory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SoundContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility\SkinnedBones.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utility\Vector.cs" />
   </ItemGroup>
 </Project>
