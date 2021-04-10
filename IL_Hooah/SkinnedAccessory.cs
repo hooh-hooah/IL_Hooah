@@ -25,7 +25,16 @@ public static class SkinnedAccessoryHook
             if (skinnedAccessory == null) continue;
             skinnedAccessory.skeleton.transform.parent = null;
         }
+
+        // The joint corrections/expressions initialized here are the one bone scan that happens before this hook can run
+        // Rerunning the scan below fixes the issue. This corrects issues with joint correction and skinned accessory wearing characters.
+        Component.Destroy(_ociChar.charInfo.objRoot.GetComponent(typeof(CharaUtils.Expression)));
+        _ociChar.charInfo.InitializeExpression(_ociChar.sex);
     }
+
+    // Much faster if we hang onto these
+    private static Type MoreAccessoriesHookType;
+    private static MethodInfo MoreAccessoriesGetCmpAccessoryMethodInfo;
 
     public static void RegisterHook()
     {
@@ -48,11 +57,45 @@ public static class SkinnedAccessoryHook
             return;
         }
 
-        harmony.Patch(AccessTools.Method(_fields.Type, "MoveNext"), null,
-            new HarmonyMethod(typeof(SkinnedAccessoryHook), nameof(RegisterQueue)));
+             harmony.Patch(AccessTools.Method(_fields.Type, "MoveNext"), null,
+                 new HarmonyMethod(typeof(SkinnedAccessoryHook), nameof(RegisterQueue)));
+
+        // Hook More Accessories
+        MoreAccessoriesHookType = AccessTools.TypeByName("MoreAccessoriesAI.Patches.ChaControl_Patches");
+        if (MoreAccessoriesHookType != null)
+        {
+            MoreAccessoriesGetCmpAccessoryMethodInfo = AccessTools.Method(MoreAccessoriesHookType, "GetCmpAccessory");
+            harmony.Patch(AccessTools.Method(MoreAccessoriesHookType, "ChangeAccessoryAsync_Prefix"), null, new HarmonyMethod(typeof(SkinnedAccessoryHook), nameof(ChangeAccessoryAsync_Prefix)));
+#if DEBUG
+            Logger.LogInfo("Hooked More Accessories");
+#endif
+        }
+        else
+        {
+#if DEBUG
+            Logger.LogInfo("More Accessories Not Found");
+#endif
+        }
+
 #if DEBUG
         Logger.LogMessage("Successfully Hooked the Skinned Accessory Initializer.");
 #endif
+    }
+
+    public static void ChangeAccessoryAsync_Prefix(ChaControl __0, int slotNo)
+    {
+        try
+        {
+            var accessory = (CmpAccessory)MoreAccessoriesGetCmpAccessoryMethodInfo.Invoke(null, new object[] { __0, slotNo + 20 });            
+            ProcessForSkinnedAccessory(__0, accessory, slotNo + 20);
+        }
+        catch (Exception e)
+        {
+            // I hope you dont see this one ever again.
+            Logger.LogError("Failed to attach More Accessory SkinnedAccessory to the character controller!");
+            Logger.LogError(e.Message);
+            Logger.LogError(e.StackTrace);
+        }
     }
 
     public static void RegisterQueue(object __instance)
@@ -71,36 +114,9 @@ public static class SkinnedAccessoryHook
             var slotId = (int) _fields.SlotNo.GetValue(__instance);
             if (slotId < 0) throw new Exception("Unable to obtain accessory slot id from the coroutine.");
 
-            // TODO: How to integrate with more accessories?
             var accessory = chaControl.cmpAccessory[slotId];
-            if (accessory == null)
-            {
-#if DEBUG
-                throw new Exception("Failed to find corrent accessory slot.");
-#endif
-                return;
-            }
+            ProcessForSkinnedAccessory(chaControl, accessory, slotId);
 
-            var gameObject = accessory.gameObject;
-            if (gameObject == null)
-            {
-#if DEBUG
-                throw new Exception("Unable to find GameObject from the CmpAccessory Component!");
-#endif
-
-                return;
-            }
-
-            var skinnedAccessory = gameObject.GetComponent<SkinnedAccessory>();
-            if (skinnedAccessory == null)
-            {
-#if DEBUG
-                throw new Exception("Unable to find Skinned Accesory.");
-#endif
-                return;
-            }
-
-            skinnedAccessory.Merge(chaControl);
         }
         catch (Exception e)
         {
@@ -109,6 +125,38 @@ public static class SkinnedAccessoryHook
             Logger.LogError(e.Message);
             Logger.LogError(e.StackTrace);
         }
+    }
+
+    private static void ProcessForSkinnedAccessory(ChaControl chaControl, CmpAccessory accessory, int slotId)
+    {
+        if (accessory == null)
+        {
+#if DEBUG
+            throw new Exception($"Failed to find corrent accessory slot {slotId}.");
+#endif
+            return;
+        }
+
+        var gameObject = accessory.gameObject;
+        if (gameObject == null)
+        {
+#if DEBUG
+            throw new Exception($"Unable to find GameObject from the CmpAccessory Component {slotId}!");
+#endif
+
+            return;
+        }
+
+        var skinnedAccessory = gameObject.GetComponent<SkinnedAccessory>();
+        if (skinnedAccessory == null)
+        {
+#if DEBUG
+            throw new Exception($"Unable to find Skinned Accesory. {slotId}");
+#endif
+            return;
+        }
+
+        skinnedAccessory.Merge(chaControl);
     }
 
     private class CoroutineFields
